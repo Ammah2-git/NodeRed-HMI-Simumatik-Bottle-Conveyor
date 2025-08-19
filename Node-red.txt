@@ -1,0 +1,324 @@
+[
+    {
+        "id": "b2a77e6d175399ba",
+        "type": "tab",
+        "label": "Push Button Dashboard",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "e23589b37b74302e",
+        "type": "ui_button",
+        "z": "b2a77e6d175399ba",
+        "name": "Start Button",
+        "group": "2c9b995540947cb4",
+        "order": 1,
+        "width": 2,
+        "height": 1,
+        "passthru": false,
+        "label": "Start",
+        "tooltip": "Start PB",
+        "color": "white",
+        "bgcolor": "green",
+        "className": "",
+        "icon": "play_arrow",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "",
+        "topicType": "str",
+        "x": 130,
+        "y": 120,
+        "wires": [
+            [
+                "30360c684455a2d7"
+            ]
+        ]
+    },
+    {
+        "id": "30360c684455a2d7",
+        "type": "function",
+        "z": "b2a77e6d175399ba",
+        "name": "Simulate Start PB (bit 0)",
+        "func": "// Assume msg.payload carries the current inputs byte (default 0)\nlet byte = 0;\n\n// Press Start = set bit 0\nbyte = byte | (1 << 0);\nmsg.payload = byte;\n\n// Release after 500ms\nsetTimeout(() => {\n    let release = byte & ~(1 << 0);\n    node.send({payload: release, item: msg.item});\n}, 500);\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 380,
+        "y": 120,
+        "wires": [
+            [
+                "a3a6c68a3cd26bed"
+            ]
+        ]
+    },
+    {
+        "id": "bad021adce57a2fe",
+        "type": "ui_button",
+        "z": "b2a77e6d175399ba",
+        "name": "Stop Button",
+        "group": "2c9b995540947cb4",
+        "order": 2,
+        "width": 2,
+        "height": 1,
+        "passthru": false,
+        "label": "Stop",
+        "tooltip": "Stop PB",
+        "color": "white",
+        "bgcolor": "red",
+        "icon": "stop",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "",
+        "x": 130,
+        "y": 200,
+        "wires": [
+            [
+                "d6dc329141f24c6b"
+            ]
+        ]
+    },
+    {
+        "id": "d6dc329141f24c6b",
+        "type": "function",
+        "z": "b2a77e6d175399ba",
+        "name": "Simulate Stop PB (bit 1)",
+        "func": "let byte = 0;\n\n// Press Stop = set bit 1\nbyte = byte | (1 << 1);\nmsg.payload = byte;\n\n// Release after 500ms\nsetTimeout(() => {\n    let release = byte & ~(1 << 1);\n    node.send({payload: release, item: msg.item});\n}, 500);\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 380,
+        "y": 200,
+        "wires": [
+            [
+                "76f859b734825f02"
+            ]
+        ]
+    },
+    {
+        "id": "a3a6c68a3cd26bed",
+        "type": "OpcUa-Item",
+        "z": "b2a77e6d175399ba",
+        "item": "ns=4;s=|var|CODESYS Control Win V3 x64.Application.GVL.inputs",
+        "datatype": "Byte",
+        "name": "inputs",
+        "x": 590,
+        "y": 120,
+        "wires": [
+            [
+                "85eac681821c2a74"
+            ]
+        ]
+    },
+    {
+        "id": "76f859b734825f02",
+        "type": "OpcUa-Item",
+        "z": "b2a77e6d175399ba",
+        "item": "ns=4;s=|var|CODESYS Control Win V3 x64.Application.GVL.inputs",
+        "datatype": "Byte",
+        "name": "inputs",
+        "x": 590,
+        "y": 200,
+        "wires": [
+            [
+                "85eac681821c2a74"
+            ]
+        ]
+    },
+    {
+        "id": "85eac681821c2a74",
+        "type": "OpcUa-Client",
+        "z": "b2a77e6d175399ba",
+        "endpoint": "3b05e00da704945b",
+        "action": "write",
+        "name": "Write to GVL.inputs",
+        "x": 830,
+        "y": 200,
+        "wires": [
+            [],
+            [],
+            []
+        ]
+    },
+    {
+        "id": "fdee159e908c3a2d",
+        "type": "inject",
+        "z": "b2a77e6d175399ba",
+        "name": "Poll Counter",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "0.5",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.5,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 160,
+        "y": 360,
+        "wires": [
+            [
+                "822210fe52fc5289"
+            ]
+        ]
+    },
+    {
+        "id": "822210fe52fc5289",
+        "type": "OpcUa-Item",
+        "z": "b2a77e6d175399ba",
+        "item": "ns=4;s=|var|CODESYS Control Win V3 x64.Application.PLC_PRG.CTU_0.CV",
+        "datatype": "UInt16",
+        "name": "Counter",
+        "x": 360,
+        "y": 360,
+        "wires": [
+            [
+                "d4576dc25278ced7"
+            ]
+        ]
+    },
+    {
+        "id": "d4576dc25278ced7",
+        "type": "OpcUa-Client",
+        "z": "b2a77e6d175399ba",
+        "endpoint": "3b05e00da704945b",
+        "action": "read",
+        "name": "Read Counter",
+        "x": 560,
+        "y": 360,
+        "wires": [
+            [
+                "a8f292a5718f3328"
+            ],
+            [],
+            []
+        ]
+    },
+    {
+        "id": "a8f292a5718f3328",
+        "type": "ui_text",
+        "z": "b2a77e6d175399ba",
+        "group": "2c9b995540947cb4",
+        "order": 3,
+        "width": 4,
+        "height": 1,
+        "name": "Counter Display",
+        "label": "Counter",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "x": 780,
+        "y": 360,
+        "wires": []
+    },
+    {
+        "id": "a15193a5e3db494f",
+        "type": "ui_button",
+        "z": "b2a77e6d175399ba",
+        "name": "Reset Button",
+        "group": "2c9b995540947cb4",
+        "order": 2,
+        "width": 2,
+        "height": 1,
+        "passthru": false,
+        "label": "Reset",
+        "tooltip": "Reset Counter",
+        "color": "white",
+        "bgcolor": "blue",
+        "className": "",
+        "icon": "refresh",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "",
+        "topicType": "str",
+        "x": 130,
+        "y": 260,
+        "wires": [
+            [
+                "1f09c3d07723ccfe"
+            ]
+        ]
+    },
+    {
+        "id": "1f09c3d07723ccfe",
+        "type": "function",
+        "z": "b2a77e6d175399ba",
+        "name": "Simulate Stop PB (bit 5)",
+        "func": "let byte = 0;\n\n// Press Stop = set bit 1\nbyte = byte | (1 << 5);\nmsg.payload = byte;\n\n// Release after 500ms\nsetTimeout(() => {\n    let release = byte & ~(1 << 5);\n    node.send({payload: release, item: msg.item});\n}, 500);\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 380,
+        "y": 260,
+        "wires": [
+            [
+                "9360c0800a944a2b"
+            ]
+        ]
+    },
+    {
+        "id": "9360c0800a944a2b",
+        "type": "OpcUa-Item",
+        "z": "b2a77e6d175399ba",
+        "item": "ns=4;s=|var|CODESYS Control Win V3 x64.Application.GVL.inputs",
+        "datatype": "Byte",
+        "name": "inputs",
+        "x": 590,
+        "y": 260,
+        "wires": [
+            [
+                "85eac681821c2a74"
+            ]
+        ]
+    },
+    {
+        "id": "2c9b995540947cb4",
+        "type": "ui_group",
+        "name": "PLC Control",
+        "tab": "5d2216c0ddb6562c",
+        "order": 1,
+        "disp": true,
+        "width": "6",
+        "collapse": false
+    },
+    {
+        "id": "3b05e00da704945b",
+        "type": "OpcUa-Endpoint",
+        "endpoint": "opc.tcp://localhost:4840",
+        "secpol": "None",
+        "secmode": "None",
+        "none": true,
+        "login": false,
+        "usercert": false,
+        "usercertificate": "",
+        "userprivatekey": ""
+    },
+    {
+        "id": "5d2216c0ddb6562c",
+        "type": "ui_tab",
+        "name": "PLC Dashboard",
+        "icon": "dashboard",
+        "order": 1,
+        "disabled": false,
+        "hidden": false
+    },
+    {
+        "id": "3606b5107f6a3e0a",
+        "type": "global-config",
+        "env": [],
+        "modules": {
+            "node-red-dashboard": "3.6.6",
+            "node-red-contrib-opcua": "0.2.340"
+        }
+    }
+]
